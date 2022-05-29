@@ -8,16 +8,17 @@ import com.pengrad.telegrambot.request.SendMessage
 
 fun main(vararg args: String) {
     val bot = TelegramBot(args[0])
+    val gson = GsonBuilder().setPrettyPrinting().create()
     bot.setUpdatesListener { updates ->
         updates.forEach { update ->
             val message = update.message()
             if (message != null) {
+                val from = message.from()
                 val sticker = message.sticker()
                 if (sticker != null) {
-                    val gson = GsonBuilder().setPrettyPrinting().create()
                     bot.execute(SendMessage(
-                        update.message().from().id(),
-                        "```\n${gson.toJson(sticker)}\n```"
+                        from.id(),
+                        "From:\n```\n${gson.toJson(from)}\n```\nSticker:\n```\n${gson.toJson(sticker)}\n```"
                     ).replyToMessageId(message.messageId())
                         .parseMode(MarkdownV2))
                 }
